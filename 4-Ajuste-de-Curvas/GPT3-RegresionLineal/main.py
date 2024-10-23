@@ -119,3 +119,20 @@ model.display_model()
 
 # Plot the data and the regression line
 model.plot(title='Ejercicio 1.4')
+
+
+# Usage
+X = [0.05, 0.4, 0.8, 1.2, 1.6, 2, 2.4]
+Y = [550, 750, 1000, 1400, 2000, 2700, 3750]
+
+# Create an instance of the LinearRegression class
+model = LinearRegression(X, Y)
+
+# Fit the model (calculate coefficients)
+model.fit()
+
+# Display the regression equation
+model.display_model()
+
+# Plot the data and the regression line
+model.plot(title='Ejercicio 1.5')
