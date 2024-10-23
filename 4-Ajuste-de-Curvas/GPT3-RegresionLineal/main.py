@@ -37,7 +37,7 @@ class LinearRegression:
         """
         print(f"Linear Regression Model: y = {self.a0:.6f} + {self.a1:.6f}x")
 
-    def plot(self):
+    def plot(self, title='Ejercicio 1.1'):
         """
         Plot the original data points and the regression line.
         """
@@ -48,7 +48,7 @@ class LinearRegression:
         plt.plot(self.X, Y_pred, color='red', label=f'Regression Line: y = {self.a0:.6f} + {self.a1:.6f}x')
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title('Linear Regression - Least Squares Method')
+        plt.title(f'Linear Regression - Least Squares Method {title}')
         plt.legend()
         plt.grid(True)
         plt.show()
@@ -67,4 +67,22 @@ model.fit()
 model.display_model()
 
 # Plot the data and the regression line
-model.plot()
+model.plot(title='Ejercicio 1.1')
+
+
+# Usage
+X = [1, 3, 5, 7, 10, 12, 13, 16, 18, 20]
+Y = [3, 2, 6, 6, 8, 7, 10, 9, 12, 10]
+
+# Create an instance of the LinearRegression class
+model = LinearRegression(X, Y)
+
+# Fit the model (calculate coefficients)
+model.fit()
+
+# Display the regression equation
+model.display_model()
+
+# Plot the data and the regression line
+model.plot(title='Ejercicio 1.2')
+
