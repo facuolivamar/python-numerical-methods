@@ -87,7 +87,6 @@ model.display_model()
 model.plot(title='Ejercicio 1.2')
 
 
-
 # Usage
 X = [1, 2, 3, 4, 5]
 Y = [0.5, 1.7, 3.4, 5.7, 8.4]
@@ -103,3 +102,20 @@ model.display_model()
 
 # Plot the data and the regression line
 model.plot(title='Ejercicio 1.3')
+
+
+# Usage
+X = [1, 2, 2.5, 4, 6, 8, 8.5]
+Y = [0.4, 0.7, 0.8, 1, 1.2, 1.3, 1.4]
+
+# Create an instance of the LinearRegression class
+model = LinearRegression(X, Y)
+
+# Fit the model (calculate coefficients)
+model.fit()
+
+# Display the regression equation
+model.display_model()
+
+# Plot the data and the regression line
+model.plot(title='Ejercicio 1.4')
