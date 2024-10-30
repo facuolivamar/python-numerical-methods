@@ -107,11 +107,14 @@ class ExponentialRegression:
         plt.grid(True)
         plt.show()
 
+"""
 # Example usage with multiple datasets
 datasets = [
-    ([1, 2, 3, 4, 5, 6, 7], [0.5, 2.5, 2.0, 4.0, 3.5, 6.0, 5.50], 'Exponential Exercise 1'),
-    ([1, 3, 5, 7, 10, 12, 13, 16, 18, 20], [3, 2, 6, 6, 8, 7, 10, 9, 12, 10], 'Exponential Exercise 2'),
-    ([1, 2, 3, 4, 5], [0.5, 1.7, 3.4, 5.7, 8.4], 'Exponential Exercise 3')
+    ([1, 2, 3, 4, 5, 6, 7], [0.5, 2.5, 2.0, 4.0, 3.5, 6.0, 5.5], 'Ejercicio 1.1'),
+    ([1, 3, 5, 7, 10, 12, 13, 16, 18, 20], [3, 2, 6, 6, 8, 7, 10, 9, 12, 10], 'Ejercicio 1.2'),
+    ([1, 2, 3, 4, 5], [0.5, 1.7, 3.4, 5.7, 8.4], 'Ejercicio 1.3'),
+    ([1, 2, 2.5, 4, 6, 8, 8.5], [0.4, 0.7, 0.8, 1, 1.2, 1.3, 1.4], 'Ejercicio 1.4'),
+    ([0.05, 0.4, 0.8, 1.2, 1.6, 2, 2.4], [550, 750, 1000, 1400, 2000, 2700, 3750], 'Ejercicio 1.5')
 ]
 
 # Process each dataset and save the results to Excel
@@ -121,3 +124,4 @@ for i, (X, Y, title) in enumerate(datasets):
     model.display_model()
     model.plot()
     model.save_to_csv(f'exponential_regression_steps_{i+1}.xlsx')
+"""
