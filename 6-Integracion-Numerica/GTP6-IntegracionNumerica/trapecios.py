@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.integrate import quad  # For exact integration
 
 def trapezoidal_rule(f, a, b, n):
     """
@@ -11,6 +12,19 @@ def trapezoidal_rule(f, a, b, n):
     # Apply the trapezoidal rule
     integral = (h / 2) * (y[0] + 2 * np.sum(y[1:-1]) + y[-1])
     return integral
+
+def calculate_error(f, a, b, n):
+    """
+    Calculate the absolute error between the analytical integral and trapezoidal rule.
+    """
+    # Exact integral using scipy's quad function
+    I_real, _ = quad(f, a, b)  # _ captures the estimation error from quad
+    I_trap = trapezoidal_rule(f, a, b, n)
+    
+    # Calculate the absolute error
+    error = abs(I_real - I_trap)
+    
+    return I_trap, I_real, error
 
 # Define the functions to be integrated
 def f1_1(x):
@@ -25,11 +39,15 @@ def f1_3(x):
 def f1_4(x):
     return x * np.exp(2 * x)
 
-# Perform the integrations using the trapezoidal rule
-print("1.1:", trapezoidal_rule(f1_1, 0, np.pi, 10))
-print("1.2:", trapezoidal_rule(f1_2, -3, 5, 10))
-print("1.3:", trapezoidal_rule(f1_3, 0, 3 * np.pi / 20, 8))
-print("1.4:", trapezoidal_rule(f1_4, 0, 4, 10))
+# Perform the integrations and print results
+for i, (f, a, b, n) in enumerate([
+    (f1_1, 0, np.pi, 10),
+    (f1_2, -3, 5, 10),
+    (f1_3, 0, 3 * np.pi / 20, 8),
+    (f1_4, 0, 4, 10)
+], 1):
+    I_trap, I_real, error = calculate_error(f, a, b, n)
+    print(f"Integral 1.{i}: Trapezoidal = {I_trap:}, Real = {I_real:}, |E| = {error:}")
 
 # Example datasets for numerical integration with given points
 def trapezoidal_from_points(X, Y):
@@ -44,9 +62,11 @@ def trapezoidal_from_points(X, Y):
 # Data for 1.5
 X_1_5 = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5])
 Y_1_5 = np.array([1.0, 7.0, 4.0, 3.0, 5.0, 9.0])
-print("1.5:", trapezoidal_from_points(X_1_5, Y_1_5))
+I_trap_1_5 = trapezoidal_from_points(X_1_5, Y_1_5)
+print(f"1.5: Trapezoidal = {I_trap_1_5:.6f}")
 
 # Data for 1.6
 X_1_6 = np.array([-3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0, 11.0])
 Y_1_6 = np.array([1.0, -4.0, -5.0, 2.0, 4.0, 9.0, 6.0, -3.0])
-print("1.6:", trapezoidal_from_points(X_1_6, Y_1_6))
+I_trap_1_6 = trapezoidal_from_points(X_1_6, Y_1_6)
+print(f"1.6: Trapezoidal = {I_trap_1_6:.6f}")
