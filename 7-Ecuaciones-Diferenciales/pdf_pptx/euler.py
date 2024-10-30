@@ -1,41 +1,91 @@
 import numpy as np
-"""
- ir de 0.1 en 0.1 hasta llegar a 4
- y1 = y0 + h * f(t0, y0)
- y1 = y0 + (f(x0)-0.5*y0)*h
-"""
-class eulers():
-    def __init__(self, f, y0, t0, t_end, h):
-        self.f = f
-        self.y0 = y0
-        self.t0 = t0
-        self.t_end = t_end
-        self.h = h
-        self.t_values, self.y_values = self.eulers_method(f, y0, t0, t_end, h)
+import pandas as pd
 
-    def eulers_method(self, f, y0, t0, t_end, h):
-        n = int((t_end - t0) / h)
-        t_values = np.linspace(t0, t_end, n+1)
-        y_values = np.zeros(n+1)
-        y_values[0] = y0
-        for i in range(1, n+1):
-            y_values[i] = y_values[i-1] + h * f(t_values[i-1], y_values[i-1])
+class EulersMethod:
+    def __init__(self, f, f_prime, y0, t0, t_end, h):
+        """
+        Initialize the Euler's Method with function, derivative, initial value, interval, and step size.
+        """
+        self.f = f  # The function to integrate
+        self.f_prime = f_prime  # Partial derivative of the function
+        self.y0 = y0  # Initial value y(0)
+        self.t0 = t0  # Start of the interval
+        self.t_end = t_end  # End of the interval
+        self.h = h  # Step size
+        self.results_table = []  # Initialize results table to store output
+        self.t_values, self.y_values = self.eulers_method()  # Compute values
+
+    def eulers_method(self):
+        """
+        Compute the values using Euler's Method.
+        """
+        n = int((self.t_end - self.t0) / self.h)  # Number of steps
+        t_values = np.linspace(self.t0, self.t_end, n + 1)  # Time points
+        y_values = np.zeros(n + 1)  # Array to store y values
+        y_values[0] = self.y0  # Initial condition
+
+        for i in range(1, n + 1):
+            y_prev = y_values[i - 1]
+            t_prev = t_values[i - 1]
+
+            # Euler’s method step: y_i+1 = y_i + h * f(t_i, y_i)
+            y_values[i] = y_prev + self.h * self.f(t_prev, y_prev)
+
+            # Calculate the local truncation error: E = (f'(x_i, y_i) / 2) * h^2
+            error = self.calculate_error(t_prev, y_prev)
+
+            # Log the result
+            self.results_table.append({
+                'i': i,
+                'Xi': round(t_prev, 4),
+                'Yi+1': round(y_values[i], 6),
+                '|E|': round(error, 6)
+            })
+
         return t_values, y_values
-    
-    def get_values(self):
-        return self.t_values, self.y_values
-    
-    def save_to_csv(self, filename):
-        np.savetxt(filename, np.column_stack((self.t_values, self.y_values)), delimiter=",", header="t,y", comments="")
 
-# pptx_8_2: Example usage from pdf pptx
-f = lambda x, y: np.exp(0.8 * x) - 0.5 * y
+    def calculate_error(self, t, y):
+        """
+        Calculate the local truncation error: E = (f'(x_i, y_i) / 2) * h^2
+        """
+        return abs(self.f_prime(t, y) / 2) * self.h ** 2
+
+    def save_to_excel(self, filename):
+        """
+        Save the results to an Excel file with the specified structure.
+        """
+        # Convert results to a DataFrame
+        df_results = pd.DataFrame(self.results_table)
+
+        # Save to Excel with a single sheet
+        with pd.ExcelWriter(filename) as writer:
+            df_results.to_excel(writer, sheet_name='Euler Results', index=False)
+
+        print(f"Saved Euler's Method results to {filename}")
+
+    def display_results(self):
+        """
+        Display the results of the Euler method.
+        """
+        print(f"\n{self.t0} - {self.t_end} with h={self.h} - Results:")
+        print(pd.DataFrame(self.results_table))
+
+# Define the function dy/dx = e^(0.8x) - 0.5y
+def differential_equation(x, y):
+    return np.exp(0.8 * x) - 0.5 * y
+
+# Define the partial derivative of f: f'(x, y) = d/dx [e^(0.8x) - 0.5y]
+def partial_derivative(x, y):
+    return 0.8 * np.exp(0.8 * x)  # Only the partial derivative with respect to x
+
+# Initialize parameters for the Euler method
 y0, t0, t_end, h = 2, 0, 4, 0.1
-euler_example = eulers(f, y0, t0, t_end, h)
 
-# Resultados
-print("Resultados del Método de Heun (Predictor y Corrector):")
-for t_val, y_val in zip(*euler_example.get_values()):
-    print(f"x: {t_val:.4f}, y_pred: {y_val:.4f}")
+# Create an instance of the Euler's Method class
+euler_example = EulersMethod(differential_equation, partial_derivative, y0, t0, t_end, h)
 
-euler_example.save_to_csv("euler_example.csv")
+# Display the results
+euler_example.display_results()
+
+# Save the results to Excel
+euler_example.save_to_excel('euler_method_results.xlsx')
