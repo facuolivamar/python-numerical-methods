@@ -1,15 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import symbols, Eq, solve, simplify
+import pandas as pd
+from sympy import symbols, simplify, lambdify
 
-class CubicSpline:
-    def __init__(self, X, Y):
+class NaturalCubicSpline:
+    def __init__(self, X, Y, title):
+        """
+        Initialize the NaturalCubicSpline model with input data X and Y.
+        """
         self.X = np.array(X, dtype=float)
         self.Y = np.array(Y, dtype=float)
         self.n = len(X) - 1  # Number of intervals
         self.h = np.diff(X)  # Step sizes
         self.coeffs = None  # Placeholder for coefficients
         self.x_symbol = symbols('x')  # Symbolic variable for polynomial
+        self.title = title  # Title for the plot
+        self.polynomials = []  # Store polynomials for each interval
 
     def compute_splines(self):
         """
@@ -42,7 +48,7 @@ class CubicSpline:
 
     def display_polynomials(self):
         """
-        Display the cubic polynomials for each interval.
+        Display and store the cubic polynomials for each interval.
         """
         print("Cubic Polynomials for Each Interval:")
         for i in range(self.n):
@@ -51,7 +57,9 @@ class CubicSpline:
                           b * (self.x_symbol - self.X[i]) + 
                           c * (self.x_symbol - self.X[i])**2 + 
                           d * (self.x_symbol - self.X[i])**3)
-            print(f"S_{i}(x) = {simplify(polynomial)} for x in [{self.X[i]}, {self.X[i+1]}]")
+            simplified_poly = simplify(polynomial)
+            self.polynomials.append(simplified_poly)  # Store polynomial
+            print(f"S_{i}(x) = {simplified_poly} for x in [{self.X[i]}, {self.X[i + 1]}]")
 
     def evaluate(self, x):
         """
@@ -63,6 +71,29 @@ class CubicSpline:
         dx = x - self.X[i]
         a, b, c, d = self.coeffs[i]
         return a + b * dx + c * dx**2 + d * dx**3
+
+    def save_to_excel(self, filename):
+        """
+        Save cubic spline coefficients and polynomials to an Excel file.
+        """
+        # Convert coefficients to a DataFrame
+        df_coeffs = pd.DataFrame(
+            self.coeffs,
+            columns=['a', 'b', 'c', 'd'],
+            index=[f"Interval {i}" for i in range(self.n)]
+        )
+
+        # Convert polynomials to a DataFrame
+        df_polynomials = pd.DataFrame({
+            "Polynomial": [str(poly) for poly in self.polynomials]
+        })
+
+        # Save to Excel with multiple sheets
+        with pd.ExcelWriter(filename) as writer:
+            df_coeffs.to_excel(writer, sheet_name='Coefficients', index=True)
+            df_polynomials.to_excel(writer, sheet_name='Polynomials', index=False)
+
+        print(f"Saved results to {filename}")
 
     def plot(self):
         """
@@ -76,22 +107,22 @@ class CubicSpline:
 
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title('Cubic Spline Interpolation')
+        plt.title(f'Natural Cubic Spline - {self.title}')
         plt.legend()
         plt.grid(True)
         plt.show()
 
-# Usage for each dataset
+# Example usage with multiple datasets
 datasets = [
-    ([0.0, 1.0, 2.0, 3.0], [1.0, 2.7182, 7.3891, 20.0855]),  # Dataset Ejercicio 1.1
-    ([0.5, 1.0, 1.5, 2.0, 2.5, 3.0], [1.0, 2.1190, 2.9100, 3.9450, 5.7200, 8.6950]),  # Dataset Ejercicio 1.2
-    ([1.0, 2.0, 3.0, 5.0, 6.0], [4.75, 4.0, 5.25, 19.75, 36.0]),  # Dataset Ejercicio 1.3
-    ([0, 10, 20, 30, 40, 50, 60], [50000, 35000, 31000, 20000, 19000, 12000, 11000])  # Dataset Ejercicio 1.4
+    ([0.0, 1.0, 2.0, 3.0], [1.0, 2.7182, 7.3891, 20.0855], 'Dataset 1'),
+    ([0.5, 1.0, 1.5, 2.0, 2.5, 3.0], [1.0, 2.1190, 2.9100, 3.9450, 5.7200, 8.6950], 'Dataset 2'),
+    ([1.0, 2.0, 3.0, 5.0, 6.0], [4.75, 4.0, 5.25, 19.75, 36.0], 'Dataset 3'),
+    ([0, 10, 20, 30, 40, 50, 60], [50000, 35000, 31000, 20000, 19000, 12000, 11000], 'Dataset 4')
 ]
 
-for i, (X, Y) in enumerate(datasets):
-    print(f"\nComputing cubic spline for dataset {i + 1}...")
-    model = CubicSpline(X, Y)
+# Process each dataset and save the results to Excel
+for i, (X, Y, title) in enumerate(datasets):
+    model = NaturalCubicSpline(X, Y, title)
     model.compute_splines()
 
     # Display the cubic polynomials
@@ -99,3 +130,6 @@ for i, (X, Y) in enumerate(datasets):
 
     # Plot the data and the spline
     model.plot()
+
+    # Save the results to Excel
+    model.save_to_excel(f'cubic_spline_{i+1}.xlsx')
