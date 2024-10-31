@@ -37,10 +37,10 @@ class heuns():
                    delimiter=",", header="t,y_predictor,y_corrector", comments="")
 
 # Función f(x, y)
-f = lambda x, y: np.exp(0.8 * x) - 0.5 * y
+f = lambda x, y: 2*(x**3)+12*x**2-20*x+8.5
 
 # Valores iniciales
-y0, t0, t_end, h = 2, 0, 4, 0.1
+y0, t0, t_end, h = 1, 0, 4, 0.50
 
 # Ejemplo de uso del método de Heun
 heun_example = heuns(f, y0, t0, t_end, h)
@@ -48,7 +48,7 @@ heun_example = heuns(f, y0, t0, t_end, h)
 # Resultados
 print("Resultados del Método de Heun (Predictor y Corrector):")
 for t, y_pred, y_corr in zip(*heun_example.get_values()):
-    print(f"x: {t:.4f}, y_pred: {y_pred:.4f}, y_corr: {y_corr:.4f}")
+    print(f"x: {t:.6f}, y_pred: {y_pred:.6f}, y_corr: {y_corr:.6f}")
 
 # Guardar resultados en CSV
 heun_example.save_to_csv("heun_example.csv")
