@@ -1,0 +1,7 @@
+https://medium.com/pythoneers/numerical-methods-in-python-3aa726c855f2
+https://medium.com/pythoneers/advanced-numerical-methods-in-python-2822777e4934
+https://medium.com/@rajat01221
+https://byjus.com/maths/trapezoidal-rule/
+https://www.atozmath.com/example/CONM/NumeInte.aspx?he=e
+https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter22.07-Advanced-Topics.html
+https://stackoverflow.com/questions/59306925/implementing-the-adams-bashforth-moulton-method-in-python
